@@ -224,27 +224,43 @@ function deactivateAll(svgRoot) {
 
 
 
-const consonantMap = {
-    "ㄱ": ["c_right_bottom", "c_right_top", "c_top"],                          // ㄱ: 왼쪽 아래 세로 + 아래 가로
-    "ㄲ": ["c_center_ver", "c_top", "c_right_bottom", "c_right_top"],         // ㄲ: ㄱ 세그먼트를 두 번 강조
-    "ㄴ": ["c_left_bottom","c_left_top", "c_bottom"],                         // ㄴ: 오른쪽 아래 세로 + 아래 가로
-    "ㄷ": ["c_top", "c_left_bottom","c_left_top", "c_bottom"],                // ㄷ: 위 + 오른쪽 아래 + 아래
-    "ㄸ": ["c_center_ver", "c_top", "c_left_bottom","c_left_top", "c_bottom"],       // ㄸ: ㄷ 세그먼트 강조
-    "ㄹ": ["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"],       // ㄹ: 좌상 + 우하 + 중앙 가로
-    "ㅁ": ["c_top", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"], // ㅁ: 사각형 틀 전체
-    "ㅂ": ["c_center_hor", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"],                                // ㅂ: 원 + 위쪽 탑바
-    "ㅃ": ["c_center_hor","c_center_ver", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"],                    // ㅃ: ㅂ 강조
-    "ㅅ": ["c_diag"],                                              // ㅅ: 대각선 사람 모양
-    "ㅆ": ["c_diag", "c_diag"],                                     // ㅆ: ㅅ 강조
-    "ㅇ": ["c_circle"],                                            // ㅇ: 원
-    "ㅈ": ["c_diag", "c_top"],                            // ㅈ: 원 + 중앙 가로
-    "ㅉ": ["c_diag", "c_top","c_diag", "c_top"],                // ㅉ: ㅈ 강조
-    "ㅊ": ["c_diag", "c_top", "c_topbar"],                  
-    "ㅋ": ["c_right_bottom", "c_right_top", "c_top", "c_center_hor"],                      // ㅋ: 왼쪽 아래 + 중앙 세로
-    "ㅌ": ["c_top", "c_bottom", "c_center_hor","c_left_bottom","c_left_top",],                  // ㅌ: 위 + 아래 + 중앙 가로
+  const consonantMap = {
+    "ㄱ": ["c_right_bottom", "c_right_top", "c_top"],
+    "ㄲ": ["c_center_ver", "c_top", "c_right_bottom", "c_right_top"],
+    "ㄴ": ["c_left_bottom","c_left_top", "c_bottom"],
+    "ㄷ": ["c_top", "c_left_bottom","c_left_top", "c_bottom"],
+    "ㄸ": ["c_center_ver", "c_top", "c_left_bottom","c_left_top", "c_bottom"],
+    "ㄹ": ["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"],
+    "ㅁ": ["c_top", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"],
+    "ㅂ": ["c_center_hor", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"],
+    "ㅃ": ["c_center_hor","c_center_ver", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"],
+    "ㅅ": ["c_diag"],
+    "ㅆ": ["c_diag", "c_diag"],
+    "ㅇ": ["c_circle"],
+    "ㅈ": ["c_diag", "c_top"],
+    "ㅉ": ["c_diag", "c_top","c_diag", "c_top"],
+    "ㅊ": ["c_diag", "c_top", "c_topbar"],
+    "ㅋ": ["c_right_bottom", "c_right_top", "c_top", "c_center_hor"],
+    "ㅌ": ["c_top", "c_bottom", "c_center_hor","c_left_bottom","c_left_top"],
     "ㅍ": ["c_top", "c_bottom", "c_circle"],
-    "ㅎ": ["c_circle", "c_top", "c_topbar"]                         // ㅎ: 원 + 위 + 대각선
+    "ㅎ": ["c_circle", "c_top", "c_topbar"],
+  
+    // ---------------------------
+    // 겹받침 (종성)
+    // ---------------------------
+    "ㄳ": [...["c_right_bottom", "c_right_top", "c_top"], ...["c_diag"]],            // ㄱ+ㅅ
+    "ㄵ": [...["c_left_bottom","c_left_top", "c_bottom"], ...["c_diag", "c_top"]],   // ㄴ+ㅈ
+    "ㄶ": [...["c_left_bottom","c_left_top", "c_bottom"], ...["c_circle", "c_top", "c_topbar"]], // ㄴ+ㅎ
+    "ㄺ": [...["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"], ...["c_right_bottom", "c_right_top", "c_top"]], // ㄹ+ㄱ
+    "ㄻ": [...["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"], ...["c_top", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"]], // ㄹ+ㅁ
+    "ㄼ": [...["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"], ...["c_center_hor", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"]], // ㄹ+ㅂ
+    "ㄽ": [...["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"], ...["c_diag"]], // ㄹ+ㅅ
+    "ㄾ": [...["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"], ...["c_top", "c_bottom", "c_center_hor","c_left_bottom","c_left_top"]], // ㄹ+ㅌ
+    "ㄿ": [...["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"], ...["c_top", "c_bottom", "c_circle"]], // ㄹ+ㅍ
+    "ㅀ": [...["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"], ...["c_circle", "c_top", "c_topbar"]], // ㄹ+ㅎ
+    "ㅄ": [...["c_center_hor", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"], ...["c_diag"]] // ㅂ+ㅅ
   };
+  
   
 
 const vowelMap = {
