@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>자음·모음 세그먼트 (SVG)</title>
+<style>
+  body {
+    font-family: "Noto Sans KR", Arial, sans-serif;
+    padding: 30px;
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  svg {
+    width: 340px;
+    height: 340px;
+  }
+
+  .seg {
+    stroke: #d3d3d3;
+    stroke-width: 8;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 150ms, stroke-width 150ms;
+  }
+  /* 1회 사용: 연한 파랑 */
+.seg.active-1 {
+    stroke: #28a8e0;
+    stroke-width: 10;
+  }
+  
+  /* 2회 사용(한번 겹침): 중간 파랑 */
+  .seg.active-2 {
+    stroke: #006fb3;
+    stroke-width: 12;
+  }
+  
+  /* 3회 이상 사용(두번 이상 겹침): 진한 파랑 */
+  .seg.active-3 {
+    stroke: #003f6b;
+    stroke-width: 14;
+  }
+  
+
+  input[type="text"] {
+    font-size: 20px;
+    padding: 8px 10px;
+    width: 220px;
+    text-align: center;
+  }
+
+  .hint {
+    color: #666;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  /* 입력 마스킹 (기본: WebKit 지원) */
+input.masked {
+    -webkit-text-security: disc; /* Chrome, Safari 등 */
+    /* 아래는 WebKit 미지원 브라우저용 폴백 */
+    color: transparent;
+    text-shadow: 0 0 0 #000; /* 실제 표시될 색(흑) 대신 그림자로 점처럼 보이게 함 */
+  }
+  
+  /* 버튼 스타일 (간단) */
+  #toggleMaskBtn {
+    font-size: 14px;
+    padding: 6px 8px;
+    cursor: pointer;
+    margin: 20px;
+  }
+  #toggleMaskBtn[aria-pressed="true"] {
+    background:#eee;
+  }
+
+/* 실제 글자 숨김 (마스크 모드) */
+.masked {
+  color: transparent !important;       /* 글자 안보이게 */
+  -webkit-text-security: none;         /* 웹킷 전용 제거 (우리가 오버레이로 처리) */
+}
+
+/* 오버레이: 입력된 글자 수만큼 ● 표시 */
+#maskOverlay {
+  position: absolute;
+  left: 10px; /* input의 패딩과 맞출 것 */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 20px;
+  font-family: inherit;
+  line-height: 1;
+  color: #000; /* 마스크 색 */
+  white-space: pre; /* 연속된 공백/문자 유지 */
+}
+
+/* 버튼 간단 스타일 */
+#toggleMaskBtn { font-size:14px; padding:6px 8px; cursor:pointer; }
+#toggleMaskBtn[aria-pressed="false"] { background:#eef; }
+
+  
+</style>
+</head>
+<body>
+
+  <!-- 자음 컬럼 -->
+  <div class="column">
+    <svg id="consonantSVG" viewBox="0 0 240 240" role="img" aria-label="자음 틀">
+      <line x1="20" y1="6" x2="220" y2="6" class="seg" id="c_topbar" />
+      <line x1="14" y1="24" x2="14" y2="130" class="seg" id="c_left_top" />
+      <line x1="14" y1="130" x2="14" y2="236" class="seg" id="c_left_bottom" />
+      <line x1="226" y1="24" x2="226" y2="130" class="seg" id="c_right_top" />
+      <line x1="226" y1="130" x2="226" y2="236" class="seg" id="c_right_bottom" />
+      <line x1="14" y1="24" x2="226" y2="24" class="seg" id="c_top" />
+      <line x1="14" y1="236" x2="226" y2="236" class="seg" id="c_bottom" />
+      <path d="M120,30 A100,100 0 1,1 119.9,30" class="seg" id="c_circle" />
+      <line x1="120" y1="34" x2="120" y2="230" class="seg" id="c_center_ver" />
+      <line x1="24" y1="120" x2="220" y2="120" class="seg" id="c_center_hor" />
+      <path d="M24,235 L120,34 L206,235" class="seg" id="c_diag" />
+    </svg>
+    <div class="hint">한 글자를 입력하면 자음 세그먼트가 표시됩니다.</div>
+  </div>
+
+  <!-- 모음 컬럼 -->
+  <div class="column">
+    <svg id="vowelSVG" viewBox="0 0 240 240" role="img" aria-label="모음 틀">
+      <line x1="14" y1="24" x2="14" y2="236" class="seg" id="v_left" />
+      <line x1="226" y1="24" x2="226" y2="236" class="seg" id="v_right" />
+      <line x1="14" y1="24" x2="226" y2="24" class="seg" id="v_top" />
+      <line x1="14" y1="236" x2="226" y2="236" class="seg" id="v_bottom" />
+      <line x1="120" y1="30" x2="120" y2="120" class="seg" id="v_center_ver_up" />
+      <line x1="120" y1="120" x2="120" y2="240" class="seg" id="v_center_ver_down" />
+      <line x1="20" y1="120" x2="120" y2="120" class="seg" id="v_center_hor_left" />
+      <line x1="120" y1="120" x2="220" y2="120" class="seg" id="v_center_hor_right" />
+      <line x1="80" y1="80" x2="80" y2="120" class="seg" id="v_ver_left_upper" />
+      <line x1="160" y1="80" x2="160" y2="120" class="seg" id="v_ver_right_upper" />
+      <line x1="80" y1="120" x2="80" y2="160" class="seg" id="v_ver_left_lower" />
+      <line x1="160" y1="120" x2="160" y2="160" class="seg" id="v_ver_right_lower" />
+      <line x1="120" y1="160" x2="160" y2="160" class="seg" id="v_hor_right_upper" />
+      <line x1="80" y1="160" x2="120" y2="160" class="seg" id="v_hor_left_lower" />
+      <line x1="120" y1="80" x2="160" y2="80" class="seg" id="v_hor_right_lower" />
+      <line x1="80" y1="80" x2="120" y2="80" class="seg" id="v_hor_left_upper" />
+    </svg>
+    <div class="hint">한 글자만 입력하면 모음 세그먼트가 표시됩니다.</div>
+  </div>
+
+  <!-- 입력 컬럼 -->
+  <div class="column">
+    <div style="display:flex; gap:8px; align-items:center;">
+        <div style="position:relative; width:220px;">
+          <input id="hangulInput" type="text" placeholder="두 글자 입력 (예: 강물)" autocomplete="off" />
+          <!-- 오버레이: 입력값 길이만큼 ●을 표시 -->
+          <span id="maskOverlay" aria-hidden="true"></span>
+        </div>
+        <button id="toggleMaskBtn" type="button" aria-pressed="true">보이지 않음</button>
+      </div>
+      
+    <div class="hint">초성·중성·종성 세그먼트가 동시에 활성화됩니다.</div>
+  </div>
+  
+  
+
+<script>
+    function hangulSplit(syllable) {
+        const code = syllable.charCodeAt(0);
+        if (code < 0xAC00 || code > 0xD7A3) return null;
+        const SIndex = code - 0xAC00;
+        const LIndex = Math.floor(SIndex / (21*28));
+        const VIndex = Math.floor((SIndex % (21*28)) / 28);
+        const TIndex = SIndex % 28;
+        const initial = String.fromCharCode(0x1100 + LIndex);
+        const medial = String.fromCharCode(0x1161 + VIndex);
+        const final = TIndex === 0 ? "" : String.fromCharCode(0x11A7 + TIndex);
+        return { initial, medial, final };
+    }
+    
+
+/* 모든 세그먼트 비활성화 및 count 초기화 */
+function deactivateAll(svgRoot) {
+    svgRoot.querySelectorAll(".seg").forEach(el => {
+      // 모든 활성 클래스 제거
+      el.classList.remove("active-1", "active-2", "active-3");
+      // 카운트 초기화
+      el.dataset.count = "0";
+    });
+  }
+  
+  /* 특정 세그먼트 활성화 (겹침 반영 + 맨 앞으로 이동) */
+  function activateSegments(svgRoot, ids) {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+  
+      // count 증가 (문자열로 저장되어 있을 수 있으니 안전하게 처리)
+      let count = parseInt(el.dataset.count || "0", 10) + 1;
+      el.dataset.count = String(count);
+  
+      // 이전 활성 클래스 모두 제거한 뒤, 카운트에 맞는 클래스 하나만 추가
+      el.classList.remove("active-1", "active-2", "active-3");
+      if (count === 1) {
+        el.classList.add("active-1");       // 1회 사용
+      } else if (count === 2) {
+        el.classList.add("active-2");       // 총 2회 사용 (한번 겹침)
+      } else { // count >= 3
+        el.classList.add("active-3");       // 총 3회 이상 사용 (두번 이상 겹침)
+      }
+  
+      // 활성화된 세그먼트를 SVG 맨 앞으로 이동(시각적으로 위에 보이게)
+      svgRoot.appendChild(el);
+    });
+  }
+  
+
+
+
+
+
+const consonantMap = {
+    "ㄱ": ["c_right_bottom", "c_right_top", "c_top"],                          // ㄱ: 왼쪽 아래 세로 + 아래 가로
+    "ㄲ": ["c_center_ver", "c_top", "c_right_bottom", "c_right_top"],         // ㄲ: ㄱ 세그먼트를 두 번 강조
+    "ㄴ": ["c_left_bottom","c_left_top", "c_bottom"],                         // ㄴ: 오른쪽 아래 세로 + 아래 가로
+    "ㄷ": ["c_top", "c_left_bottom","c_left_top", "c_bottom"],                // ㄷ: 위 + 오른쪽 아래 + 아래
+    "ㄸ": ["c_center_ver", "c_top", "c_left_bottom","c_left_top", "c_bottom"],       // ㄸ: ㄷ 세그먼트 강조
+    "ㄹ": ["c_right_top", "c_left_bottom", "c_center_hor", "c_top", "c_bottom"],       // ㄹ: 좌상 + 우하 + 중앙 가로
+    "ㅁ": ["c_top", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"], // ㅁ: 사각형 틀 전체
+    "ㅂ": ["c_center_hor", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"],                                // ㅂ: 원 + 위쪽 탑바
+    "ㅃ": ["c_center_hor","c_center_ver", "c_bottom", "c_left_top", "c_left_bottom", "c_right_top", "c_right_bottom"],                    // ㅃ: ㅂ 강조
+    "ㅅ": ["c_diag"],                                              // ㅅ: 대각선 사람 모양
+    "ㅆ": ["c_diag", "c_diag"],                                     // ㅆ: ㅅ 강조
+    "ㅇ": ["c_circle"],                                            // ㅇ: 원
+    "ㅈ": ["c_diag", "c_top"],                            // ㅈ: 원 + 중앙 가로
+    "ㅉ": ["c_diag", "c_top","c_diag", "c_top"],                // ㅉ: ㅈ 강조
+    "ㅊ": ["c_diag", "c_top", "c_topbar"],                  
+    "ㅋ": ["c_right_bottom", "c_right_top", "c_top", "c_center_hor"],                      // ㅋ: 왼쪽 아래 + 중앙 세로
+    "ㅌ": ["c_top", "c_bottom", "c_center_hor","c_left_bottom","c_left_top",],                  // ㅌ: 위 + 아래 + 중앙 가로
+    "ㅍ": ["c_top", "c_bottom", "c_circle"],
+    "ㅎ": ["c_circle", "c_top", "c_topbar"]                         // ㅎ: 원 + 위 + 대각선
+  };
+  
+
+const vowelMap = {
+    "ㅏ": ["v_center_ver_up", "v_center_ver_down", "v_center_hor_right"],
+    "ㅑ": ["v_center_ver_up", "v_center_ver_down", "v_hor_right_upper", "v_hor_right_lower"],
+    "ㅓ": ["v_center_ver_up", "v_center_ver_down", "v_center_hor_left"],
+    "ㅕ": ["v_center_ver_up", "v_center_ver_down", "v_hor_left_upper", "v_hor_left_lower"],
+    "ㅣ": ["v_center_ver_up", "v_center_ver_down"],
+  
+    "ㅡ": ["v_center_hor_left", "v_center_hor_right"],
+    "ㅗ": ["v_center_hor_left", "v_center_hor_right", "v_center_ver_up"],
+    "ㅛ": ["v_center_hor_left", "v_center_hor_right", "v_ver_left_upper", "v_ver_right_upper"],
+    "ㅜ": ["v_center_hor_left", "v_center_hor_right", "v_center_ver_down"],
+    "ㅠ": ["v_center_hor_left", "v_center_hor_right", "v_ver_left_lower", "v_ver_right_lower"],
+
+    // 추가 모음
+    "ㅢ": ["v_right","v_bottom"],
+    "ㅚ": ["v_center_ver_down","v_bottom","v_right"],
+    "ㅐ": ["v_center_ver_up","v_center_ver_down","v_center_hor_right","v_right"],
+    "ㅔ": ["v_center_ver_up","v_center_ver_down","v_center_hor_left","v_right"],
+    "ㅟ": ["v_center_ver_down","v_center_hor_right","v_center_hor_left","v_right"],
+    "ㅒ": ["v_center_ver_up","v_center_ver_down","v_hor_right_upper","v_hor_right_lower","v_right"],
+    "ㅖ": ["v_center_ver_up","v_center_ver_down","v_hor_left_upper","v_hor_left_lower","v_right"],
+    "ㅘ": [...["v_center_ver_down","v_bottom"], ...["v_center_ver_up", "v_center_ver_down", "v_center_hor_right"]],
+    "ㅙ": [...["v_center_ver_down","v_bottom"], ...["v_center_ver_up","v_center_ver_down","v_center_hor_right","v_right"]],
+    "ㅝ": [...["v_center_hor_left", "v_center_hor_right", "v_center_ver_down"], ...["v_right", "v_center_hor_right", "v_center_hor_left"]],
+    "ㅞ": [...["v_center_hor_left", "v_center_hor_right", "v_center_ver_down"], ...["v_center_ver_up","v_center_ver_down","v_center_hor_right","v_right"]],
+};
+  
+// 입력 이벤트
+function activateConsonant(ch){
+    activateSegments(document.getElementById("consonantSVG"), consonantMap[ch] || []);
+}
+function activateVowel(ch){
+    activateSegments(document.getElementById("vowelSVG"), vowelMap[ch] || []);
+}
+
+function initialToChar(initial) {
+    const map = {
+        "\u1100":"ㄱ", "\u1101":"ㄲ", "\u1102":"ㄴ", "\u1103":"ㄷ", "\u1104":"ㄸ",
+        "\u1105":"ㄹ", "\u1106":"ㅁ", "\u1107":"ㅂ", "\u1108":"ㅃ", "\u1109":"ㅅ",
+        "\u110A":"ㅆ", "\u110B":"ㅇ", "\u110C":"ㅈ", "\u110D":"ㅉ", "\u110E":"ㅊ",
+        "\u110F":"ㅋ", "\u1110":"ㅌ", "\u1111":"ㅍ", "\u1112":"ㅎ"
+    };
+    return map[initial] || "";
+}
+
+function medialToChar(medial) {
+    const map = {
+        "\u1161":"ㅏ","\u1162":"ㅐ","\u1163":"ㅑ","\u1164":"ㅒ","\u1165":"ㅓ",
+        "\u1166":"ㅔ","\u1167":"ㅕ","\u1168":"ㅖ","\u1169":"ㅗ","\u116A":"ㅘ",
+        "\u116B":"ㅙ","\u116C":"ㅚ","\u116D":"ㅛ","\u116E":"ㅜ","\u116F":"ㅝ",
+        "\u1170":"ㅞ","\u1171":"ㅟ","\u1172":"ㅠ","\u1173":"ㅡ","\u1174":"ㅢ",
+        "\u1175":"ㅣ"
+    };
+    return map[medial] || "";
+}
+function finalToChar(final) {
+    const map = {
+        "\u11A8":"ㄱ", "\u11A9":"ㄲ", "\u11AA":"ㄳ", "\u11AB":"ㄴ",
+        "\u11AC":"ㄵ", "\u11AD":"ㄶ", "\u11AE":"ㄷ", "\u11AF":"ㄹ",
+        "\u11B0":"ㄺ", "\u11B1":"ㄻ", "\u11B2":"ㄼ", "\u11B3":"ㄽ",
+        "\u11B4":"ㄾ", "\u11B5":"ㄿ", "\u11B6":"ㅀ", "\u11B7":"ㅁ",
+        "\u11B8":"ㅂ", "\u11B9":"ㅄ", "\u11BA":"ㅅ", "\u11BB":"ㅆ",
+        "\u11BC":"ㅇ", "\u11BD":"ㅈ", "\u11BE":"ㅊ", "\u11BF":"ㅋ",
+        "\u11C0":"ㅌ", "\u11C1":"ㅍ", "\u11C2":"ㅎ"
+    };
+    return map[final] || "";
+}
+
+
+
+document.getElementById("hangulInput").addEventListener("input", e => {
+    const val = e.target.value.trim().slice(0,2); // 최대 두 글자
+    const cSVG = document.getElementById("consonantSVG");
+    const vSVG = document.getElementById("vowelSVG");
+
+    deactivateAll(cSVG);
+    deactivateAll(vSVG);
+
+    for (const char of val) {
+        const parts = hangulSplit(char);
+        if (parts) {
+            const initialChar = initialToChar(parts.initial);
+            if (initialChar) activateConsonant(initialChar);
+
+            const medialChar = medialToChar(parts.medial);
+            if (medialChar) activateVowel(medialChar);
+
+            if (parts.final) {
+                const finalChar = finalToChar(parts.final);
+                if (finalChar) activateConsonant(finalChar);
+            }
+        } else {
+            if (consonantMap[char]) activateConsonant(char);
+            else if (vowelMap[char]) activateVowel(char);
+        }
+    }
+});
+
+// 마스크 토글 버튼
+const maskBtn = document.getElementById("toggleMaskBtn");
+const hangulInput = document.getElementById("hangulInput");
+
+maskBtn.addEventListener("click", () => {
+  const isMasked = hangulInput.classList.toggle("masked"); // 토글
+  // 접근성 상태 업데이트
+  maskBtn.setAttribute("aria-pressed", String(isMasked));
+  maskBtn.textContent = isMasked ? "보이기" : "숨기기";
+  // 포커스 유지
+  hangulInput.focus();
+});
+
+
+
+
+
+
+
+
+
+  </script>
+  </body>
+  </html>
