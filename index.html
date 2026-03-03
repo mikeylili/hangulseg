@@ -5,16 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>한글 세그먼트 분석 도구</title>
 <style>
-  /* 인간적인 따스함을 주는 뉴트럴 컬러 테마 */
   :root {
-    --bg-color: #f7f3f0;      /* 부드러운 오트밀 색상 */
+    --bg-color: #f7f3f0;     
     --card-bg: #ffffff;
-    --text-main: #4a4541;     /* 진한 갈색조 회색 */
+    --text-main: #4a4541;
     --text-sub: #9e948d;
-    --accent-1: #6db9d7;      /* 차분한 하늘색 */
-    --accent-2: #8a88d8;      /* 부드러운 보라색 */
-    --accent-3: #2c3e75;      /* 깊은 남색 */
-    --inactive: #ece6e1;      /* 비활성: 따뜻한 베이지 */
+    --accent-1: #6db9d7;
+    --accent-2: #8a88d8;
+    --accent-3: #2c3e75;
+    --inactive: #ece6e1;
     --border: #e2ddd9;
   }
 
@@ -128,7 +127,7 @@
   input[type="text"]:focus { border-color: var(--accent-1); }
   input.masked { -webkit-text-security: disc; color: transparent; text-shadow: 0 0 0 var(--text-main); }
 
-  /* 토글 버튼 디자인 개선 */
+
   #toggleMaskBtn {
     display: flex;
     align-items: center;
@@ -146,14 +145,13 @@
   }
   
   #toggleMaskBtn.is-active #eyeIcon {
-    filter: invert(1) brightness(2); /* 색상을 반전시켜 흰색으로 만듦 */
+    filter: invert(1) brightness(2); 
   }
 
   /* SVG 아이콘 크기 제어 */
   #toggleMaskBtn img {
     width: 20px;
     height: 20px;
-    /* 현재 텍스트 색상을 따라가도록 설정 (SVG 내부에 fill="currentColor"가 있을 경우) */
   }
 
   #toggleMaskBtn.is-active {
@@ -278,7 +276,6 @@
   </div>
 
 <script>
-    /* 로직 보존: 기존 기능 유지 */
     function hangulSplit(syllable) {
         const code = syllable.charCodeAt(0);
         if (code < 0xAC00 || code > 0xD7A3) return null;
@@ -357,7 +354,6 @@
     document.getElementById('prevBtn').onclick = () => { currentIdx = currentIdx > 1 ? currentIdx - 1 : 4; updateImg(); };
     document.getElementById('nextBtn').onclick = () => { currentIdx = currentIdx < 4 ? currentIdx + 1 : 1; updateImg(); };
 
-    /* 토글 버튼 클릭 이벤트 수정 */
     const maskBtn = document.getElementById('toggleMaskBtn');
   const hangulInput = document.getElementById('hangulInput');
   const btnText = document.getElementById('btnText');
